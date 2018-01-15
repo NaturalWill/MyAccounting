@@ -11,20 +11,24 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
             <RowDefinition Height="36"/>
+            <RowDefinition Height="36"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" >
             <TextBox  Grid.Column="3" Margin="5" x:Name="txtAccount" TextWrapping="Wrap"  MinWidth="120" VerticalAlignment="Center" Padding="10,2"/>
-            <Button Grid.Column="4" Margin="5"  Click="AddAccount_Click" Padding="10,2" VerticalAlignment="Center">Add</Button>
+            <Button Grid.Column="4" Margin="5"  Click="AddAccount_Click" Padding="10,2" VerticalAlignment="Center">AddAccount</Button>
             <Button Grid.Column="4" Margin="5"  Click="AccountDetail_Click" Padding="10,2" VerticalAlignment="Center">AccountDetail</Button>
+            <Button Grid.Column="4" Margin="5"  Click="Change_Click" Padding="10,2" VerticalAlignment="Center">AccountChange</Button>
 
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" >
             <Button Grid.Column="4" Margin="5"  Click="AccountTotal_Click" Padding="10,2" VerticalAlignment="Center">AccountTotal</Button>
             <DatePicker Grid.Column="0" Margin="5"    x:Name="dpCountStart"       VerticalAlignment="Center"   Padding="10,2"  />
             <TextBlock Text="--"  VerticalAlignment="Center" />
             <DatePicker Grid.Column="0" Margin="5"  x:Name="dpCountEnd"    VerticalAlignment="Center"    Padding="10,2" SelectedDateChanged="DatePicker_SelectedDateChanged"  />
             <Button Grid.Column="4" Margin="5"  Click="CompareTotal_Click" Padding="10,2" VerticalAlignment="Center">CompareTotal</Button>
         </StackPanel>
-        <StackPanel  Grid.Row="1"  Orientation="Horizontal" >
+        <StackPanel  Grid.Row="2"  Orientation="Horizontal" >
             <ComboBox  Grid.Column="1" Margin="5"  x:Name="cbAccount" DisplayMemberPath="Name" 
                            SelectionChanged="cbAccount_SelectionChanged"
                            HorizontalAlignment="Stretch" VerticalAlignment="Center"   MinWidth="120"   Padding="10,2"/>
@@ -38,6 +42,6 @@
         </StackPanel>
 
 
-        <DataGrid  Grid.Row="2"  x:Name="dgRecord"   Margin="5"  />
+        <DataGrid  Grid.Row="3"  x:Name="dgRecord"   Margin="5"  />
     </Grid>
 </Window>

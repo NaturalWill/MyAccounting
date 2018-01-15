@@ -223,5 +223,10 @@ namespace MyAccounting
             });
             dgRecord.ItemsSource = record;
         }
+
+        private void Change_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

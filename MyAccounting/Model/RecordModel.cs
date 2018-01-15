@@ -35,14 +35,6 @@ namespace MyAccounting.Model
         public string AccountName { get; set; }
 
     }
-    public class AssetShowContext : DbContext
-    {
-
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Record> Records { get; set; }
-
-
-    }
     public class BaseDispalyRecord
     {
         public DateTime RecordDate { get; set; }
