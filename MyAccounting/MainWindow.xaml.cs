@@ -177,6 +177,8 @@ namespace MyAccounting
 
         private void CompareTotal_Click(object sender, RoutedEventArgs e)
         {
+            if (dpCountStart.SelectedDate is null || dpCountEnd.SelectedDate is null) return;
+
             var dtSatrt = dpCountStart.SelectedDate.Value;
             var dtEnd = dpCountEnd.SelectedDate.Value;
             var tr1 = GetTotalDisplayRecords(dtSatrt);
