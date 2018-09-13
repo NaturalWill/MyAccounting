@@ -36,22 +36,39 @@ namespace MyAccounting
         }
         private void cbAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            FreshAccountItems();
 
+        }
+
+        private void FreshAccountItems()
+        {
             if (cbAccount.SelectedIndex < 0) return;
 
             dgRecord.ItemsSource = GetDisplayRecord((cbAccount.SelectedItem as Account).Records);
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            txtAsset.Text = txtDebt.Text = txtLimit.Text = txtUsable.Text = txtInfo.Text = "";
 
         }
         private void Add_Click(object sender, RoutedEventArgs e)
         {
 
             if (cbAccount.SelectedIndex < 0) return;
+
+            decimal.TryParse(txtAsset.Text.Trim(), out var asset);
+            decimal.TryParse(txtDebt.Text.Trim(), out var debt);
+            decimal.TryParse(txtLimit.Text.Trim(), out var limit);
+            decimal.TryParse(txtUsable.Text.Trim(), out var usable);
+            if (debt == 0 && (usable > 0 && limit > 0))
+                debt = limit - usable;
             var record = new Record
             {
                 RecordDate = dpDate.SelectedDate == null ? DateTime.Now : dpDate.SelectedDate.Value,
                 AccountId = (cbAccount.SelectedItem as Account).AccountId,
-                Asset = Convert.ToDecimal(txtAsset.Text.Trim()),
-                Debt = Convert.ToDecimal(txtDebt.Text.Trim()),
+                Asset = asset,
+                Debt = debt,
                 Info = txtInfo.Text.Trim(),
             };
 
@@ -62,6 +79,40 @@ namespace MyAccounting
 
         }
 
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            var item = dgRecord.SelectedItem;
+            if (item is DispalyRecord record &&
+                MessageBox.Show($"确认要删除记录 {record.RecordId}", "删除", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                var toRemove = db.Records.Where(x => x.RecordId == record.RecordId).First();
+                db.Records.Remove(toRemove);
+                db.SaveChangesAsync();
+                FreshAccountItems();
+            }
+        }
+        private void Change_Click(object sender, RoutedEventArgs e)
+        {
+            var item = dgRecord.SelectedItem;
+            if (item is DispalyRecord record &&
+                MessageBox.Show($"确认要修改记录 {record.RecordId}", "警告", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                var toChange = db.Records.Where(x => x.RecordId == record.RecordId).First();
+                if (toChange != null)
+                {
+
+                    toChange.RecordDate = record.RecordDate;
+                    toChange.Asset = record.Asset;
+                    toChange.Debt = record.Debt;
+                    toChange.Info = record.Info;
+                    db.SaveChanges();
+                    MessageBox.Show("change success.");
+                    FreshAccountItems();
+                }
+
+            }
+
+        }
         private void AddAccount_Click(object sender, RoutedEventArgs e)
         {
             var a = txtAccount.Text.Trim();
@@ -226,9 +277,6 @@ namespace MyAccounting
             dgRecord.ItemsSource = record;
         }
 
-        private void Change_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
     }
 }

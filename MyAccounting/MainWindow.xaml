@@ -35,13 +35,22 @@
 
             <DatePicker Grid.Column="0" Margin="5"  x:Name="dpDate"   VerticalAlignment="Center"   Padding="10,2" />
             <TextBox Grid.Column="2" Margin="5" x:Name="txtAsset" TextWrapping="Wrap"   Padding="10,2" MinWidth="60" VerticalAlignment="Center"/>
-            <TextBox  Grid.Column="3" Margin="5" x:Name="txtDebt" TextWrapping="Wrap"   Padding="10,2" MinWidth="60" VerticalAlignment="Center"/>
+            <TextBlock Text="|" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBox  Grid.Column="3" Margin="5" x:Name="txtDebt" TextWrapping="Wrap"   Padding="10,2" MinWidth="60" VerticalAlignment="Center" ToolTip="负债"/>
+           <TextBox  Grid.Column="3" Margin="5" x:Name="txtUsable" TextWrapping="Wrap"   Padding="10,2" MinWidth="60" VerticalAlignment="Center" ToolTip="剩余可用"/>
+
+            <TextBox  Grid.Column="3" Margin="5" x:Name="txtLimit" TextWrapping="Wrap"   Padding="10,2" MinWidth="60" VerticalAlignment="Center" ToolTip="总额度"/>
+            <TextBlock Text="|" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox  Grid.Column="3" Margin="5" x:Name="txtInfo" TextWrapping="Wrap"  Padding="10,2" MinWidth="60" VerticalAlignment="Center"/>
             <Button Grid.Column="4" Margin="5"  Click="Add_Click" VerticalAlignment="Center" Padding="10,2">Add</Button>
-
+            <Button Grid.Column="4" Margin="5"  Click="Clear_Click" VerticalAlignment="Center" Padding="10,2">Clear</Button>
+            <Button Grid.Column="4" Margin="5"  Click="Delete_Click" VerticalAlignment="Center" Padding="10,2">Delete</Button>
+            <Button Grid.Column="4" Margin="5"  Click="Change_Click" VerticalAlignment="Center" Padding="10,2">Change</Button>
         </StackPanel>
 
 
         <DataGrid  Grid.Row="3"  x:Name="dgRecord"   Margin="5"  />
+
+
     </Grid>
 </Window>
