@@ -6,10 +6,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebMyAccount.Models;
+using NJsonSchema;
+using NSwag.AspNetCore;
 
 namespace WebMyAccount
 {
@@ -25,7 +29,16 @@ namespace WebMyAccount
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //var connection = Configuration.GetConnectionString("MSSQL");
+            //services.AddDbContext<MyAccountContext>(option => option.UseSqlServer(connection));
+
+            var connection = Configuration.GetConnectionString("SQLite");
+            services.AddDbContext<MyAccountContext>(option => option.UseSqlite(connection));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // Register the Swagger services
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +52,10 @@ namespace WebMyAccount
             {
                 app.UseHsts();
             }
+            // Register the Swagger generator and the Swagger UI middlewares
+            app.UseSwagger();
+            app.UseSwaggerUi3();
+
 
             app.UseHttpsRedirection();
             app.UseMvc();
