@@ -15,6 +15,8 @@ namespace MyAccounting.Model
         public string Name { get; set; }
         public int Ratio { get; set; }
 
+        public int Priority { get; set; }
+
         public virtual List<Record> Records { get; set; }
     }
 }

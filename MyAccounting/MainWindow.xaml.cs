@@ -29,7 +29,7 @@ namespace MyAccounting
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             db = new AssetShowContext();
-            cbAccount.ItemsSource = db.Accounts.ToList();
+            cbAccount.ItemsSource = db.Accounts.OrderBy(x=>x.Priority).ToList();
 
             if (cbAccount.Items.Count > 0)
                 cbAccount.SelectedIndex = 0;
