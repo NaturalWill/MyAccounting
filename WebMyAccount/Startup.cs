@@ -29,12 +29,16 @@ namespace WebMyAccount
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //var connection = Configuration.GetConnectionString("MSSQL");
-            //services.AddDbContext<MyAccountContext>(option => option.UseSqlServer(connection));
+            var connection = Configuration.GetConnectionString("MSSQL");
+            services.AddDbContext<MyAccountContext>(option => option.UseSqlServer(connection));
 
-            var connection = Configuration.GetConnectionString("SQLite");
-            services.AddDbContext<MyAccountContext>(option => option.UseSqlite(connection));
+            //var connection = Configuration.GetConnectionString("SQLite");
+            //services.AddDbContext<MyAccountContext>(option => option.UseSqlite(connection));
 
+            //跨域注入
+            services.AddCors();
+            // 路由全小写
+            services.AddRouting(options => options.LowercaseUrls = true);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Register the Swagger services
@@ -55,7 +59,7 @@ namespace WebMyAccount
             // Register the Swagger generator and the Swagger UI middlewares
             app.UseSwagger();
             app.UseSwaggerUi3();
-
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseHttpsRedirection();
             app.UseMvc();

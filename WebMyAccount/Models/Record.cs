@@ -7,7 +7,11 @@ namespace WebMyAccount.Models
         public System.DateTime RecordDate { get; set; }
         public string Info { get; set; }
         // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int RecordId { get; set; }
+        public long RecordId { get; set; }
+    }
+    public class RecordDto : Record
+    {
         public virtual List<RecordDetail> Details { get; set; }
+
     }
 }

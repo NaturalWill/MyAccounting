@@ -8,7 +8,8 @@ using WebMyAccount.Models;
 
 namespace WebMyAccount.Controllers
 {
-    [Route("api/[controller]")]
+
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -28,6 +29,7 @@ namespace WebMyAccount.Controllers
 
 
         }
+        [HttpGet]
         public ActionResult<List<Account>> List()
         {
             var list = _context.Accounts.ToList();
