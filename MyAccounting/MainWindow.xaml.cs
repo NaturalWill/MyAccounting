@@ -26,10 +26,11 @@ namespace MyAccounting
             InitializeComponent();
         }
         AssetShowContext db;
+        List<Account> AccountList;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             db = new AssetShowContext();
-            cbAccount.ItemsSource = db.Accounts.OrderBy(x=>x.Priority).ToList();
+            cbAccount.ItemsSource = AccountList = db.Accounts.OrderBy(x => x.Priority).ToList();
 
             if (cbAccount.Items.Count > 0)
                 cbAccount.SelectedIndex = 0;
@@ -133,8 +134,8 @@ namespace MyAccounting
 
         private void AccountTotal_Click(object sender, RoutedEventArgs e)
         {
-
-            dgRecord.ItemsSource = GetTotalDisplayRecords();
+            var list = GetTotalDisplayRecords();
+            dgRecord.ItemsSource = list;
         }
 
         private List<TotalDispalyRecord> GetTotalDisplayRecords()
@@ -149,9 +150,15 @@ namespace MyAccounting
             };
             if (db.Records == null || db.Records.Count() == 0) return record;
             var s = db.Records.GroupBy(x => x.AccountId);
+            var list = new List<Record>();
             s.ToList().ForEach((x) =>
             {
                 var r = x.OrderByDescending(y => y.RecordDate).First();
+                list.Add(r);
+
+            });
+            list.OrderBy(x => x.Account.Priority).ToList().ForEach(r =>
+            {
                 total.Asset += r.Asset;
                 total.Debt += r.Debt;
                 record.Add(new TotalDispalyRecord
@@ -162,7 +169,8 @@ namespace MyAccounting
                     Info = r.Info,
                     AccountName = r.Account.Name
                 });
-            });
+            }
+            );
             record.Add(total);
             return record;
         }
