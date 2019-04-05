@@ -30,9 +30,16 @@ namespace MyAccounting.Model
         public string AccountName { get; set; }
 
     }
-    public class TotalCompareDispalyRecord : DispalyRecord
+    public class TotalCompareDispalyRecord : BaseDispalyRecord
     {
         public string AccountName { get; set; }
+        public DateTime LastRecordDate { get; set; }
+        public decimal LastAsset { get; set; }
+        public decimal LastDebt { get; set; }
+        public decimal LastReal => LastAsset - LastDebt;
+        public decimal AssetOffset { get; set; }
+        public decimal DebtOffset { get; set; }
+        public decimal RealOffset { get { return AssetOffset - DebtOffset; } }
 
     }
     public class BaseDispalyRecord
@@ -40,7 +47,7 @@ namespace MyAccounting.Model
         public DateTime RecordDate { get; set; }
         public decimal Asset { get; set; }
         public decimal Debt { get; set; }
-        public decimal Real { get { return Asset - Debt; } }
+        public decimal Real => Asset - Debt;
         public string Info { get; set; }
 
     }

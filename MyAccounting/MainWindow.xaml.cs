@@ -176,7 +176,7 @@ namespace MyAccounting
         }
         private List<TotalDispalyRecord> GetTotalDisplayRecords(DateTime dt)
         {
-            List<TotalDispalyRecord> record = new List<TotalDispalyRecord>();
+            List<TotalDispalyRecord> rec = new List<TotalDispalyRecord>();
             TotalDispalyRecord total = new TotalDispalyRecord
             {
                 AccountName = "总计",
@@ -184,7 +184,8 @@ namespace MyAccounting
                 Asset = 0,
                 Debt = 0,
             };
-            if (db.Records == null || db.Records.Count() == 0) return record;
+            if (db.Records == null || db.Records.Count() == 0) return rec;
+            List<TotalDispalyRecord> record = new List<TotalDispalyRecord>();
             var s = db.Records.Where(x => dt.CompareTo(x.RecordDate) >= 0).GroupBy(x => x.AccountId);
             s.ToList().ForEach((x) =>
             {
@@ -201,7 +202,16 @@ namespace MyAccounting
                 });
             });
             record.Add(total);
-            return record;
+
+            record.OrderBy(x => x.AccountName);
+
+            // 排序
+            db.Accounts.OrderBy(x => x.Priority).ToList().ForEach(x =>
+            {
+                rec.Add(record.Find(y => x.Name == y.AccountName));
+            });
+
+            return rec;
         }
 
         List<DispalyRecord> GetDisplayRecord(List<Record> record)
@@ -236,52 +246,56 @@ namespace MyAccounting
 
         private void CompareTotal_Click(object sender, RoutedEventArgs e)
         {
-            if (dpCountStart.SelectedDate is null || dpCountEnd.SelectedDate is null) return;
+            //if (dpCountStart.SelectedDate is null || dpCountEnd.SelectedDate is null) return;
 
-            var dtSatrt = dpCountStart.SelectedDate.Value;
-            var dtEnd = dpCountEnd.SelectedDate.Value;
+            var dtEnd = (dpCountEnd.SelectedDate is null) ? DateTime.Now : dpCountEnd.SelectedDate.Value.Date.AddDays(1).AddSeconds(-1);
+            var dtSatrt =(dpCountStart.SelectedDate is null)? dtEnd.Date: dpCountStart.SelectedDate.Value;
             var tr1 = GetTotalDisplayRecords(dtSatrt);
             var tr2 = GetTotalDisplayRecords(dtEnd);
-            List<TotalCompareDispalyRecord> record = new List<TotalCompareDispalyRecord>();
+            var record = new List<TotalCompareDispalyRecord>();
             int i = 0;
             tr2.ForEach((y) =>
             {
                 var x = tr1[i];
+
+                var r = new TotalCompareDispalyRecord
+                {
+                    RecordDate = y.RecordDate,
+                    Asset = y.Asset,
+                    Debt = y.Debt,
+                    Info = y.Info,
+                    AccountName = y.AccountName,
+                };
+
                 if (x.AccountName.Equals(y.AccountName))
                 {
-                    record.Add(new TotalCompareDispalyRecord
-                    {
-                        RecordDate = x.RecordDate,
-                        Asset = x.Asset,
-                        Debt = x.Debt,
-                        Info = x.Info,
-                        AccountName = x.AccountName
-                    });
-                    record.Add(new TotalCompareDispalyRecord
-                    {
-                        RecordDate = y.RecordDate,
-                        Asset = y.Asset,
-                        Debt = y.Debt,
-                        Info = y.Info,
-                        AccountName = y.AccountName,
+                    r.LastRecordDate = x.RecordDate;
+                    r.LastAsset = x.Asset;
+                    r.LastDebt = x.Debt;
 
-                        AssetOffset = y.Asset - x.Asset,
-                        DebtOffset = y.Debt - x.Debt,
-                    });
+                    r.AssetOffset = y.Asset - x.Asset;
+                    r.DebtOffset = y.Debt - x.Debt;
+
                     i++;
                 }
-                else
-                {
-                    record.Add(new TotalCompareDispalyRecord
-                    {
-                        RecordDate = y.RecordDate,
-                        Asset = y.Asset,
-                        Debt = y.Debt,
-                        Info = y.Info,
-                        AccountName = y.AccountName,
-                    });
-                }
+                record.Add(r);
             });
+
+            var recTotal = new TotalCompareDispalyRecord
+            {
+                AccountName = "总计",
+                LastRecordDate = record.Max(x => x.LastRecordDate),
+                RecordDate = record.Max(x => x.RecordDate),
+
+                Asset = record.Sum(x => x.Asset),
+                Debt = record.Sum(x => x.Debt),
+                LastAsset = record.Sum(x => x.LastAsset),
+                LastDebt = record.Sum(x => x.LastDebt),
+                AssetOffset = record.Sum(x => x.AssetOffset),
+                DebtOffset = record.Sum(x => x.DebtOffset),
+            };
+            record.Add(recTotal);
+
             dgRecord.ItemsSource = record;
         }
 
