@@ -126,11 +126,6 @@ namespace MyAccounting
             }
         }
 
-        private void AccountDetail_Click(object sender, RoutedEventArgs e)
-        {
-            new AccountDetail().Show();
-
-        }
 
         private void AccountTotal_Click(object sender, RoutedEventArgs e)
         {
