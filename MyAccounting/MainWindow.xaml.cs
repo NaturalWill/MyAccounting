@@ -181,7 +181,7 @@ namespace MyAccounting
             };
             if (db.Records == null || db.Records.Count() == 0) return rec;
             List<TotalDispalyRecord> record = new List<TotalDispalyRecord>();
-            var s = db.Records.Where(x => dt.CompareTo(x.RecordDate) >= 0).GroupBy(x => x.AccountId);
+            var s = db.Records.Where(x => dt.CompareTo(x.RecordDate) > 0).GroupBy(x => x.AccountId);
             s.ToList().ForEach((x) =>
             {
                 var r = x.OrderByDescending(y => y.RecordDate).First();
@@ -233,26 +233,46 @@ namespace MyAccounting
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            var dt = sender as DatePicker;
+            //var dt = sender as DatePicker;
 
 
-            dgRecord.ItemsSource = GetTotalDisplayRecords(dt.SelectedDate.Value);
+            //dgRecord.ItemsSource = GetTotalDisplayRecords(dt.SelectedDate.Value);
         }
+        static void RemoveNull<T>(List<T> list)
+        {
+            // 找出第一个空元素 O(n)
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+                if (list[i] == null)
+                {
+                    // 记录当前位置
+                    int newCount = i++;
 
+                    // 对每个非空元素，复制至当前位置 O(n)
+                    for (; i < count; i++)
+                        if (list[i] != null)
+                            list[newCount++] = list[i];
+
+                    // 移除多余的元素 O(n)
+                    list.RemoveRange(newCount, count - newCount);
+                    break;
+                }
+        }
         private void CompareTotal_Click(object sender, RoutedEventArgs e)
         {
             //if (dpCountStart.SelectedDate is null || dpCountEnd.SelectedDate is null) return;
 
-            var dtEnd = (dpCountEnd.SelectedDate is null) ? DateTime.Now : dpCountEnd.SelectedDate.Value.Date.AddDays(1).AddSeconds(-1);
-            var dtSatrt =(dpCountStart.SelectedDate is null)? dtEnd.Date: dpCountStart.SelectedDate.Value;
+            var dtEnd = (dpCountEnd.SelectedDate is null) ? DateTime.Now : dpCountEnd.SelectedDate.Value.Date.AddDays(1);//.AddSeconds(-1);
+            var dtSatrt = (dpCountStart.SelectedDate is null) ? dtEnd.Date : dpCountStart.SelectedDate.Value.Date;
             var tr1 = GetTotalDisplayRecords(dtSatrt);
+            RemoveNull(tr1);
             var tr2 = GetTotalDisplayRecords(dtEnd);
+            RemoveNull(tr2);
             var record = new List<TotalCompareDispalyRecord>();
             int i = 0;
             tr2.ForEach((y) =>
             {
                 var x = tr1[i];
-
                 var r = new TotalCompareDispalyRecord
                 {
                     RecordDate = y.RecordDate,
@@ -273,6 +293,12 @@ namespace MyAccounting
 
                     i++;
                 }
+                else
+                {
+                    r.AssetOffset = y.Asset - 0;
+                    r.DebtOffset = y.Debt - 0;
+
+                }
                 record.Add(r);
             });
 
@@ -289,11 +315,36 @@ namespace MyAccounting
                 AssetOffset = record.Sum(x => x.AssetOffset),
                 DebtOffset = record.Sum(x => x.DebtOffset),
             };
+            //recTotal.AssetOffset = recTotal.Asset - recTotal.LastAsset;
+            //recTotal.DebtOffset = recTotal.Debt - recTotal.LastDebt;
+
             record.Add(recTotal);
 
             dgRecord.ItemsSource = record;
         }
 
+        private void Tools_Click(object sender, RoutedEventArgs e)
+        {
+            //var aMainId = 3;
+            //var aId = 18;
+            //var aMain = db.Records.Where(x => x.AccountId == aMainId).ToList();
+            //var a = db.Records.Where(x => x.AccountId == aId).ToList();
+            //foreach (var m in aMain)
+            //{
+            //    foreach (var b in a)
+            //    {
+            //        if (m.RecordDate.Date == b.RecordDate.Date)
+            //        {
+            //            m.Debt = b.Debt;
+            //            break;
+            //        }
+            //    }
+            //}
+            //db.SaveChanges();
+            //MessageBox.Show("change success.");
 
+
+
+        }
     }
 }
