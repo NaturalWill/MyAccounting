@@ -156,14 +156,18 @@ namespace MyAccounting
             {
                 total.Asset += r.Asset;
                 total.Debt += r.Debt;
-                record.Add(new TotalDispalyRecord
-                {
-                    RecordDate = r.RecordDate,
-                    Asset = r.Asset,
-                    Debt = r.Debt,
-                    Info = r.Info,
-                    AccountName = r.Account.Name
-                });
+
+                bool zero = r.Real == 0 && r.Asset == 0 && cbHideZero.IsChecked.Value;
+
+                if (!zero)
+                    record.Add(new TotalDispalyRecord
+                    {
+                        RecordDate = r.RecordDate,
+                        Asset = r.Asset,
+                        Debt = r.Debt,
+                        Info = r.Info,
+                        AccountName = r.Account.Name
+                    });
             }
             );
             record.Add(total);
@@ -297,9 +301,11 @@ namespace MyAccounting
                 {
                     r.AssetOffset = y.Asset - 0;
                     r.DebtOffset = y.Debt - 0;
-
                 }
-                record.Add(r);
+                bool zero = r.RealOffset == 0 && r.Real == 0 && r.Asset == 0 && cbHideZero.IsChecked.Value;
+
+                if (!zero)
+                    record.Add(r);
             });
 
             var recTotal = new TotalCompareDispalyRecord
@@ -345,6 +351,13 @@ namespace MyAccounting
 
 
 
+        }
+
+
+        private void dgRecord_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(System.DateTime))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "yyyy/MM/dd HH:mm";
         }
     }
 }
